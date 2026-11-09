@@ -1,0 +1,614 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Despiece de Mobiliario</title><style>
+  :root{
+    --blueprint: #16323E;
+    --blueprint-dark: #0F252E;
+    --blueprint-line: #6FA8B8;
+    --paper: #F0E6D2;
+    --paper-dim: #A9B4B8;
+    --wood: #D98C4A;
+    --wood-dark: #9C5E2C;
+    --ink: #14201F;
+    --ok: #7FB88A;
+    --radius: 10px;
+    --radius-lg: 18px;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
+    --shadow-lg: 0 20px 50px -12px rgba(0,0,0,0.55);
+    --ease: cubic-bezier(.2,.8,.2,1);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(900px 500px at 12% -10%, rgba(217,140,74,0.14), transparent 60%),
+      radial-gradient(1000px 600px at 100% 0%, rgba(111,168,184,0.12), transparent 55%),
+      linear-gradient(180deg, #14262E 0%, var(--blueprint) 100%);
+    background-attachment: fixed;
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px 72px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap{ max-width: 1140px; margin: 0 auto; }
+  header{ margin-bottom: 32px; padding-bottom: 0; }
+  header h1{
+    font-family: 'Archivo', sans-serif;
+    font-weight: 800;
+    font-size: clamp(30px, 4.2vw, 46px);
+    margin: 0 0 10px;
+    letter-spacing: -0.02em;
+    background: linear-gradient(100deg, var(--paper) 30%, var(--wood) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  header p{
+    margin: 0;
+    color: var(--paper-dim);
+    font-size: 15px;
+    max-width: 62ch;
+    line-height: 1.55;
+  }
+  .grid{
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 22px;
+    align-items: start;
+  }
+  @media (max-width: 860px){
+    .grid{ grid-template-columns: 1fr; }
+  }
+  .panel{
+    background: rgba(19,45,55,0.6);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(240,230,210,0.14);
+    border-radius: var(--radius-lg);
+    padding: 26px;
+    box-shadow: var(--shadow-lg);
+  }
+  .panel h2{
+    font-family: 'Archivo', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin: 0 0 6px;
+    color: var(--wood);
+    display:flex; align-items:center; gap:10px;
+  }
+  .panel h2 .num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(217,140,74,0.16); color: var(--wood);
+    font-weight: 700; font-size: 11px;
+  }
+  .panel .sub{ font-size: 12.5px; color: var(--paper-dim); margin: 0 0 20px; line-height: 1.5;}
+  .ficha-titulo{
+    display:none; font-family:'Archivo', sans-serif; font-weight:700; font-size: 16px;
+    color: var(--paper); margin: -8px 0 20px; padding-bottom: 14px;
+    border-bottom: 1px solid rgba(240,230,210,0.15);
+  }
+  fieldset{ border: none; margin: 0 0 20px; padding: 0; }
+  fieldset legend{
+    font-size: 12px;
+    text-transform: none;
+    color: var(--blueprint-line);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .field{ margin-bottom: 12px; }
+  .field label{
+    display:flex; justify-content: space-between; align-items:baseline;
+    font-size: 13px; color: var(--paper); margin-bottom: 5px;
+  }
+  .field label .hint{ color: var(--paper-dim); font-size: 11px; font-weight: 400; }
+  .field input[type=number]{
+    width: 100%;
+    background: rgba(240,230,210,0.06);
+    border: 1px solid rgba(240,230,210,0.2);
+    color: var(--paper);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    padding: 10px 12px;
+    border-radius: var(--radius);
+    transition: border-color .18s var(--ease), background .18s var(--ease), box-shadow .18s var(--ease);
+  }
+  .field input[type=text]{
+    width: 100%;
+    background: rgba(240,230,210,0.06);
+    border: 1px solid rgba(240,230,210,0.2);
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    padding: 10px 12px;
+    border-radius: var(--radius);
+    transition: border-color .18s var(--ease), background .18s var(--ease), box-shadow .18s var(--ease);
+  }
+  .field input[type=number]:hover, .field input[type=text]:hover{ border-color: rgba(240,230,210,0.35); }
+  .field input[type=number]:focus, .field input[type=text]:focus{
+    outline: none;
+    border-color: var(--wood);
+    background: rgba(240,230,210,0.1);
+    box-shadow: 0 0 0 3px rgba(217,140,74,0.18);
+  }
+  .row2{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .radios{ display:flex; flex-direction:column; gap:10px; }
+  .radios label{
+    display:flex; gap:10px; align-items:flex-start;
+    font-size: 12.5px; line-height:1.4; color: var(--paper);
+    cursor:pointer; padding: 10px 12px; border-radius: var(--radius);
+    background: rgba(240,230,210,0.04);
+    border: 1px solid rgba(240,230,210,0.1);
+    transition: background .18s var(--ease), border-color .18s var(--ease);
+  }
+  .radios label:hover{ background: rgba(240,230,210,0.08); border-color: rgba(240,230,210,0.22); }
+  .radios input{ margin-top: 3px; accent-color: var(--wood); }
+  .radios span.d{ color: var(--paper-dim); display:block; font-size:11.5px; }
+  .autonote{ font-size: 11.5px; color: var(--paper-dim); margin: -6px 0 0; }
+  .autonote a{ color: var(--wood); text-decoration: none; border-bottom: 1px dashed var(--wood); }
+  .autonote a:hover{ color: var(--paper); }
+  details.advanced{ margin: 4px 0 18px; }
+  details.advanced summary{
+    cursor: pointer; list-style: none; font-size: 12.5px; font-weight: 600;
+    color: var(--blueprint-line); padding: 10px 14px; border-radius: var(--radius);
+    background: rgba(240,230,210,0.05); border: 1px solid rgba(240,230,210,0.15);
+    display:flex; align-items:center; gap:8px;
+  }
+  details.advanced summary::-webkit-details-marker{ display:none; }
+  details.advanced summary::before{ content:'▸'; font-size: 10px; transition: transform .15s var(--ease); }
+  details.advanced[open] summary::before{ transform: rotate(90deg); }
+  details.advanced summary:hover{ background: rgba(240,230,210,0.1); }
+  details.advanced fieldset{ margin-top: 18px; }
+  .toggle-group{ display:flex; gap:8px; }
+  .toggle-pill{
+    flex:1; text-align:center; padding:9px 10px; border-radius:999px;
+    border:1px solid rgba(240,230,210,0.25); background: rgba(240,230,210,0.05);
+    cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:14px; color:var(--paper);
+    transition: background .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease);
+  }
+  .toggle-pill input{ display:none; }
+  .toggle-pill:has(input:checked){ background: var(--wood); color: var(--blueprint-dark); border-color: var(--wood); font-weight:600; }
+  .toggle-pill:hover{ border-color: rgba(240,230,210,0.45); }
+
+  .results h2{ color: var(--paper); }
+  .cutlist{ width: 100%; border-collapse: collapse; margin-bottom: 22px; font-size: 13.5px; }
+  .cutlist th, .cutlist td{
+    text-align: left;
+    padding: 11px 10px;
+    border-bottom: 1px solid rgba(240,230,210,0.1);
+  }
+  .cutlist thead th{
+    font-family:'Archivo', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    color: var(--blueprint-line);
+    font-weight: 700;
+    border-bottom: 1px solid rgba(240,230,210,0.25);
+  }
+  .cutlist tbody tr:hover td{ background: rgba(240,230,210,0.035); }
+  .cutlist td.dim, .cutlist td.qty{ font-family:'IBM Plex Mono', monospace; color: var(--wood); font-weight:600; }
+  .cutlist tr.section td{
+    font-family:'Archivo', sans-serif; font-size:11px; letter-spacing:.03em;
+    color: var(--paper-dim); padding-top: 20px; border-bottom: none;
+  }
+  .cutlist tr.section:hover td{ background: none; }
+  .cutlist tr.section td::before{
+    content:''; display:inline-block; width:7px; height:7px; border-radius:50%;
+    margin-right: 7px; vertical-align: middle;
+  }
+  .section-marco td::before{ background: var(--wood); }
+  .section-hoja td::before{ background: var(--paper); }
+  .section-batiente td::before{ background: var(--ok); }
+  .section-tapa td::before{ background: var(--blueprint-line); }
+
+  .material-card{
+    background: linear-gradient(135deg, rgba(217,140,74,0.12), rgba(217,140,74,0.04));
+    border: 1px solid rgba(217,140,74,0.3);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .material-card h3{
+    font-family:'Archivo', sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.03em; margin: 0 0 12px; color: var(--wood);
+  }
+  .material-row{
+    display:flex; justify-content: space-between; align-items:baseline;
+    gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(240,230,210,0.12);
+    flex-wrap: wrap;
+  }
+  .material-row:last-of-type{ border-bottom: none; }
+  .material-row.material-total{ border-top: 1px dashed rgba(217,140,74,0.4); padding-top: 12px; }
+  .material-row.material-total .material-label{ font-weight: 600; color: var(--paper); }
+  .material-label{ font-size: 13.5px; color: var(--paper); display:flex; align-items:baseline; gap: 6px; flex-wrap: wrap; }
+  .material-spec{ font-size: 11px; color: var(--paper-dim); font-family:'IBM Plex Mono', monospace; }
+  .material-nums{ display:flex; gap: 14px; align-items:baseline; font-family:'IBM Plex Mono', monospace; font-size: 13px; }
+  .material-nums span{ color: var(--paper-dim); }
+  .material-nums strong{ color: var(--wood); font-size: 16px; }
+  .dot{ display:inline-block; width:7px; height:7px; border-radius:50%; }
+  .dot-marco{ background: var(--wood); }
+  .dot-batiente{ background: var(--ok); }
+  .dot-tapa{ background: var(--blueprint-line); }
+  .material-note{ font-size: 11.5px; color: var(--paper-dim); margin: 12px 0 0; line-height:1.5; }
+
+  .reftable{ margin-top: -4px; }
+  .reftable caption{
+    text-align: left; font-size: 11.5px; color: var(--paper-dim);
+    padding-bottom: 10px; font-style: italic;
+  }
+  .diagram{
+    background: radial-gradient(400px 300px at 50% 30%, rgba(111,168,184,0.08), transparent 70%), rgba(10,25,31,0.4);
+    border: 1px solid rgba(240,230,210,0.14);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 22px;
+    display:flex; justify-content:center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), var(--shadow-sm);
+  }
+  .diagram svg{ width: 100%; max-width: 300px; height: auto; display:block; }
+  .diagram-caption{ font-size: 11.5px; color: var(--paper-dim); text-align:center; margin: -8px 0 6px; }
+  .diagram-side{ padding: 8px; }
+  .diagram-wide svg{ max-width: 620px; }
+  .exploded-piece{ fill:none; stroke: var(--paper-dim); stroke-width: 1; }
+  .jamba-outline{ fill:none; stroke: var(--blueprint-line); stroke-width: 1; stroke-dasharray: 4 3; }
+  .exp-arrow{ stroke: var(--paper-dim); stroke-width: 0.75; }
+  .exp-title{ font-family:'Archivo', sans-serif; font-weight:700; font-size: 13px; fill: var(--wood); }
+  .exp-value{ font-family:'IBM Plex Mono', monospace; font-size: 12px; fill: var(--paper); }
+  .sideview-block{ fill: var(--wood); fill-opacity: 0.28; stroke: var(--wood); stroke-width: 1.5; }
+  .dimtext{ font-family:'IBM Plex Mono', monospace; font-size: 11px; fill: var(--paper); }
+  .dimtext-accent{ fill: var(--wood); }
+  .dimtext-hoja{ fill: var(--paper); }
+  .dimline{ stroke: var(--blueprint-line); stroke-width: 1; }
+  .vano-outline{ fill:none; stroke: var(--blueprint-line); stroke-dasharray: 4 3; stroke-width: 1; }
+  .marco-outline{ fill:none; stroke: var(--wood); stroke-width: 2; }
+  .marco-inner{ fill:none; stroke: var(--blueprint-line); stroke-dasharray: 2 2; stroke-width: 1; }
+  .hoja-fill{ fill: var(--wood); fill-opacity: 0.18; stroke: var(--paper); stroke-width: 1.2; }
+  .tapa-outline{ fill:none; stroke: var(--paper); stroke-opacity: 0.5; stroke-dasharray: 2 2; stroke-width: 1; }
+  .footnote{ font-size: 12px; color: var(--paper-dim); line-height:1.6; }
+  .footnote strong{ color: var(--paper); }
+  .footnote.warning{
+    display:none; background: rgba(226,75,74,0.12); border: 1px solid rgba(226,75,74,0.4);
+    border-radius: var(--radius); padding: 10px 14px; margin-top: 10px; color: #F3C9C9;
+  }
+  .footnote.warning strong{ color: #F3C9C9; }
+  .btnrow{ display:flex; gap:10px; margin-top: 18px; flex-wrap: wrap; }
+  .copy-status{ display:none; font-size: 12px; color: var(--ok); margin-top: 8px; }
+  button{
+    font-family:'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: 1px solid var(--wood);
+    background: linear-gradient(135deg, #E39C5D, var(--wood));
+    color: var(--blueprint-dark);
+    cursor: pointer;
+    box-shadow: 0 8px 20px -8px rgba(217,140,74,0.6);
+    transition: transform .16s var(--ease), box-shadow .16s var(--ease), filter .16s var(--ease);
+  }
+  button.secondary{
+    background: rgba(240,230,210,0.06);
+    color: var(--paper);
+    border-color: rgba(240,230,210,0.3);
+    box-shadow: none;
+  }
+  button:hover{ transform: translateY(-1px); filter: brightness(1.06); box-shadow: 0 10px 24px -8px rgba(217,140,74,0.7); }
+  button.secondary:hover{ background: rgba(240,230,210,0.12); box-shadow: none; }
+  button:active{ transform: translateY(0); }
+  @media print{
+    body{ background: white; color: black; padding: 0; }
+    .panel{ border-color: #999; background:none; backdrop-filter: none; box-shadow: none; }
+    .btnrow{ display:none; }
+    header p{ color: #333; }
+    header h1{ background: none; -webkit-background-clip: initial; background-clip: initial; color: #000; }
+    .panel h2{ color: #8A4A1F; }
+    .panel .sub, .field .hint, fieldset legend, .radios span.d{ color: #555; }
+    .field input[type=number]{ background: none; border-color: #999; color: #000; }
+    .field input[type=text]{ background: none; border-color: #999; color: #000; }
+    .ficha-titulo{ color: #000; border-bottom-color: #ccc; }
+    .cutlist thead th{ color: #333; border-bottom-color: #333; }
+    .cutlist td.dim, .cutlist td.qty{ color: #8A4A1F; }
+    .cutlist tr.section td{ color: #555; }
+    .section-marco td::before{ background: #8A4A1F; }
+    .section-hoja td::before{ background: #999; }
+    .section-batiente td::before{ background: #4E7D57; }
+    .section-tapa td::before{ background: #555; }
+    .material-card{ background: none; border-color: #8A4A1F; }
+    .material-card h3{ color: #8A4A1F; }
+    .material-label{ color: #000; }
+    .material-spec{ color: #555; }
+    .material-nums span{ color: #555; }
+    .material-nums strong{ color: #8A4A1F; }
+    .dot-marco{ background: #8A4A1F; }
+    .dot-batiente{ background: #4E7D57; }
+    .dot-tapa{ background: #555; }
+    .material-note{ color: #555; }
+    .reftable caption{ color: #555; }
+    .diagram{ border-color: #999; background: none; }
+    .diagram-caption{ color: #555; }
+    .sideview-block{ fill: #8A4A1F; fill-opacity: 0.15; stroke: #8A4A1F; }
+    .exploded-piece{ stroke: #555; }
+    .jamba-outline{ stroke: #888; }
+    .exp-arrow{ stroke: #555; }
+    .exp-title{ fill: #8A4A1F; }
+    .exp-value{ fill: #000; }
+    .footnote{ color: #333; }
+    .footnote strong{ color: #000; }
+    .footnote.warning{ background: none; border-color: #A32D2D; color: #A32D2D; }
+    .footnote.warning strong{ color: #A32D2D; }
+    .autonote, .autonote a{ color: #555; }
+    details.advanced summary{ background: none; border-color: #999; color: #333; }
+    details.advanced > *:not(summary){ display: block !important; }
+    .toggle-pill{ border-color: #999; color: #000; }
+    .toggle-pill:has(input:checked){ background: none; border-color: #8A4A1F; color: #8A4A1F; font-weight:700; }
+    .dimtext{ fill: #111; }
+    .dimtext-accent{ fill: #8A4A1F; }
+    .dimtext-hoja{ fill: #111; }
+    .dimline{ stroke: #555; }
+    .vano-outline{ stroke: #888; }
+    .marco-outline{ stroke: #8A4A1F; }
+    .marco-inner{ stroke: #555; }
+    .hoja-fill{ fill: #8A4A1F; fill-opacity: 0.12; stroke: #333; }
+    .tapa-outline{ stroke: #555; stroke-opacity: 0.8; }
+  }
+</style></head><body><div class="wrap">
+<header><h1>Despiece de Mobiliario</h1>
+<p>Cada módulo (cajón) se arma por separado: le das sus medidas, y la herramienta calcula sus costados, pisos, fondo, repisas, gavetas y puertas. Agrega tantos módulos como lleve el mueble.</p></header>
+<div class="grid">
+<div class="panel">
+<h2><span class="num">01</span>Módulos del mueble</h2>
+<p class="sub">Medidas en centímetros. Los espesores de cada módulo se eligen aquí: laterales e interior suelen ser 1.5; costados y frentes pueden variar. El ancho que escribes incluye los costados que elijas.</p>
+<div class="field"><label>Título / descripción</label><input type="text" id="titulo" placeholder="ej. Closet cuarto principal"></div>
+<fieldset><legend>Zócalo y patas (todo el mueble)</legend>
+<p class="sub">El mueble se eleva con patas plásticas (10 a 15 cm). El zócalo es continuo: una sola pieza a lo largo de todos los módulos que van sobre patas.</p>
+<div class="row2"><div class="field"><label>Tipo de zócalo</label><select id="zt" onchange="calc()"><option value="pvc">PVC</option><option value="mel">Melamina, mismo color del mueble</option><option value="none">Sin zócalo (solo patas)</option></select></div>
+<div class="field"><label>Alto del zócalo / patas <span class="hint">cm, de 10 a 15</span></label><input type="number" id="za" value="10" step="0.5" min="10" max="15"></div></div>
+<div class="field"><label>Color del zócalo <span class="hint">ej. negro, cromado</span></label><input type="text" id="zc" placeholder="negro"></div></fieldset>
+<div id="mods"></div>
+<div class="btnrow"><button type="button" class="secondary" id="addM">+ Agregar módulo</button></div>
+<details class="advanced"><summary>Valores por defecto (avanzado)</summary>
+<div class="row2"><div class="field"><label>Holgura gaveta (ancho) <span class="hint">cm total</span></label><input type="number" id="holgG" value="2.7" step="0.1"></div></div>
+<div class="row2"><div class="field"><label>Riel automático: espacio libre atrás <span class="hint">cm</span></label><input type="number" id="restaG" value="8" step="0.1"></div>
+<div class="field"><label>Caja de gaveta: alto menos que el frente <span class="hint">cm</span></label><input type="number" id="extraF" value="3.8" step="0.1"></div></div>
+<div class="row2"><div class="field"><label>Descuento de frentes y puertas <span class="hint">cm, ancho y alto (0.2 = 2 mm)</span></label><input type="number" id="holgP" value="0.2" step="0.1"></div>
+<div class="field"><label>Repisa: profundidad menos <span class="hint">cm</span></label><input type="number" id="retiro" value="3" step="0.1"></div></div>
+<div class="row2"><div class="field"><label>Repisa: ancho menos <span class="hint">cm de holgura</span></label><input type="number" id="holgR" value="0.1" step="0.05"></div></div>
+<div class="row2"><div class="field"><label>Costado: profundidad extra <span class="hint">cm sobre el lateral</span></label><input type="number" id="cext" value="2.1" step="0.1"></div></div>
+<div class="row2"><div class="field"><label>Espesor del zócalo de melamina <span class="hint">cm</span></label><input type="number" id="zesp" value="1.5" step="0.1"></div></div>
+<div class="row2"><div class="field"><label>Espesor del fondo <span class="hint">cm, pegado atrás</span></label><input type="number" id="fe" value="0.6" step="0.1"></div><div class="field"><label>Profundidad reglas de techo <span class="hint">cm</span></label><input type="number" id="rt" value="10" step="0.5"></div></div>
+<div class="row2"><div class="field"><label>Espesor del fondo superior <span class="hint">cm, embutido</span></label><input type="number" id="feS" value="1.5" step="0.1"></div></div>
+<div class="row2"><div class="field"><label>Desperdicio láminas <span class="hint">%</span></label><input type="number" id="desp" value="10" step="1"></div></div>
+</details>
+<fieldset class="projbar" id="proyectos"><legend>Proyectos guardados</legend>
+<p class="sub">Escribe el título del proyecto aquí abajo y toca Guardar. Lo que estás haciendo también se guarda solo en este navegador, para que no se pierda si cierras la página.</p>
+<div class="btnrow"><button type="button" id="pGuardar">Guardar proyecto</button><button type="button" class="secondary" id="pCopia">Guardar como copia</button><button type="button" class="secondary" id="pNuevo">Proyecto nuevo</button></div>
+<div class="field"><label>Mis proyectos</label><select id="pLista"></select></div>
+<div class="btnrow"><button type="button" class="secondary" id="pAbrir">Abrir</button><button type="button" class="secondary" id="pBorrar">Borrar</button><button type="button" class="secondary" id="pExp">Descargar archivo</button><button type="button" class="secondary" id="pImpB">Abrir archivo</button><input type="file" id="pImp" accept=".json,application/json" style="display:none"></div>
+<span class="copy-status" id="pMsg"></span>
+<p class="sub" style="margin-top:8px">Los proyectos viven en este navegador y este dispositivo. Para pasarlos a otro celular o computadora, usa “Descargar archivo” y luego “Abrir archivo” allá.</p></fieldset>
+
+</div>
+<div class="panel">
+<h2><span class="num">02</span>Despiece</h2>
+<div id="ficha"></div>
+<div id="diagram" class="diagram"></div>
+<div id="material"></div>
+<div class="btnrow"><button type="button" id="btnCopiar">Copiar texto</button><button type="button" id="btnWa">Enviar por WhatsApp</button><button type="button" class="secondary" onclick="window.print()">Imprimir / PDF</button></div>
+<span class="copy-status" id="cs"></span>
+<textarea id="txtBox" readonly style="display:none;width:100%;height:260px;margin-top:10px;padding:10px;border-radius:10px;background:rgba(0,0,0,.3);color:inherit;border:1px solid rgba(240,230,210,.25);font:12px/1.5 monospace"></textarea>
+</div></div></div>
+<style>
+.mod{border:1px solid rgba(240,230,210,.2);border-radius:14px;padding:14px;margin:14px 0}
+.grid{grid-template-columns:minmax(420px,500px) 1fr!important}
+@media(max-width:1000px){.grid{grid-template-columns:1fr!important}}
+#zt{width:100%;padding:10px;border-radius:10px;background:rgba(0,0,0,.25);color:inherit;border:1px solid rgba(240,230,210,.25)}
+.diagram .plan svg{max-width:none!important;width:100%!important}
+#diagram.diagram{padding:0!important;background:none!important;border:0!important}
+.plan{margin:22px 0 10px;padding:18px 14px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(240,230,210,.14)}
+.plan-t{margin:0 0 12px;text-align:center;font-size:17px;color:#F2C99A}
+.plan-leg{margin-top:16px;font-size:14px;line-height:1.55}
+.plan-leg ul{margin:8px 0 14px 18px;padding:0}
+.plan-leg li{margin:5px 0}
+.plan-res{border-top:1px solid rgba(240,230,210,.14);padding-top:12px}
+@media print{.plan{break-inside:avoid}}
+.blk{margin:12px 0;padding:12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(240,230,210,.12)}
+.blk-t{display:flex;gap:8px;align-items:center;font-weight:700;font-size:13px;letter-spacing:.4px;text-transform:uppercase;color:#F2C99A;margin:0 0 10px}
+.blk-t b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#D98C4A;color:#16323E;font-size:12px}
+.blk-s{font-size:12px;opacity:.75;margin:-4px 0 10px}
+.mod h3{margin:0 0 10px;font-size:15px;color:var(--wood,#D98C4A)}
+.mod .row3{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px}
+.mod select{width:100%;padding:10px;border-radius:10px;background:rgba(0,0,0,.25);color:inherit;border:1px solid rgba(240,230,210,.25)}
+.mod .grow{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;align-items:end;margin-bottom:8px}
+.mod .sm{font-size:12px;opacity:.8;margin:10px 0 4px}
+
+table.cutlist tr.section td{font-size:16px;font-weight:700;letter-spacing:.2px;color:#fff;background:linear-gradient(90deg,rgba(217,140,74,.55),rgba(217,140,74,.12));padding:14px 12px;border-top:18px solid transparent;border-bottom:2px solid #D98C4A;background-clip:padding-box}
+table.cutlist tr.section.sup td{background:linear-gradient(90deg,rgba(90,150,200,.55),rgba(90,150,200,.12));border-bottom-color:#5A96C8}
+table.cutlist tr.section:first-child td,table.cutlist tbody tr.section:first-child td{border-top-width:0}
+table.cutlist tr.subsec td{font-size:13px;font-weight:700;color:#F2C99A;background:rgba(255,255,255,.06);padding:9px 12px;border-top:6px solid transparent;background-clip:padding-box;letter-spacing:.2px}
+@media print{table.cutlist tr.subsec td{background:#f6f6f6!important;color:#000!important}}
+@media print{.mod,#mods,#addM,#proyectos{display:none}}
+@media print{table.cutlist tr.section td{background:#eee!important;color:#000!important;border-bottom:2px solid #000}}
+</style>
+<script>
+const $=id=>document.getElementById(id),num=id=>parseFloat($(id).value)||0,r=x=>Math.floor(x*10+1e-6)/10,v=(c,s)=>parseFloat(c.querySelector(s).value)||0;
+const opt=(d)=>`<option value="1.8"${d==1.8?' selected':''}>1.8 cm</option><option value="1.5"${d==1.5?' selected':''}>1.5 cm</option>`;
+function rowG(q,f){const d=document.createElement('div');d.className='grow';d.innerHTML=`<div class="field"><label>Cantidad</label><input type="number" class="q" value="${q}" min="1"></div><div class="field"><label>Alto del frente <span class="hint">vacío = automático</span></label><input type="number" class="f" value="${f}" step="0.1"></div><button type="button" class="secondary x">Quitar</button>`;d.querySelector('.x').onclick=()=>{d.remove();calc()};return d}
+function addMod(o){o=Object.assign({tg:1.5,col:'',colc:'',colr:'',colg:'blanco',cm:'normal',re:1.5,tipo:'inf',cz:0,nc:0,rail:0,n:'',q:1,w:82.4,h:200,d:60,zs:1,tc:1.8,ti:1.5,tf:1.8,rep:1,pu:0,pa:'',g:[]},o||{});
+ const c=document.createElement('div');c.className='mod';
+ c.innerHTML=`<h3></h3>
+<div class="blk"><div class="blk-t"><b>1</b>Datos del módulo</div>
+<div class="row3"><div class="field"><label>Tipo de mueble</label><select class="tipo"><option value="inf">Inferior</option><option value="sup">Superior (aéreo)</option></select></div><div class="field"><label>Nombre</label><input type="text" class="mn" value="${o.n}" placeholder="ej. Zapatera"></div><div class="field"><label>Cantidad iguales</label><input type="number" class="mq" value="${o.q}" min="1" step="1"></div></div>
+<div class="row3"><div class="field"><label>Ancho <span class="hint">cm</span></label><input type="number" class="mw" value="${o.w}" step="0.1"></div><div class="field"><label>Alto <span class="hint">cm</span></label><input type="number" class="mh" value="${o.h}" step="0.1"></div><div class="field"><label>Profundidad <span class="hint">cm</span></label><input type="number" class="md" value="${o.d}" step="0.1"></div><div class="field"><label>¿Lleva zócalo y patas?</label><select class="mz"><option value="1">Sí, se eleva con patas</option><option value="0">No (aéreo o va al piso)</option></select></div></div></div>
+<div class="blk"><div class="blk-t"><b>2</b>Estructura</div><div class="blk-s">Laterales, piso, techo y fondo</div>
+<div class="row3"><div class="field"><label>Espesor</label><select class="ti">${opt(o.ti)}</select></div><div class="field"><label>Color</label><input type="text" class="col" value="${String(o.col).replace(/"/g,'&quot;')}" placeholder="ej. roble"></div></div></div>
+<div class="blk"><div class="blk-t"><b>3</b>Costados y puertas</div>
+<div class="row3"><div class="field"><label>Costados</label><select class="nc"><option value="0">Sin costado</option><option value="1">1 costado</option><option value="2">2 costados</option></select></div><div class="field"><label>Espesor costado</label><select class="tc">${opt(o.tc)}</select></div><div class="field"><label>Alto del costado</label><select class="cz"><option value="0">Sin zócalo</option><option value="1">Incluye el zócalo</option></select></div></div>
+<div class="row3"><div class="field"><label>Puertas</label><select class="mp"><option value="0">Sin puerta</option><option value="1">1 puerta</option><option value="2">2 puertas</option></select></div><div class="field"><label>Alto puerta <span class="hint">vacío = automático</span></label><input type="number" class="pa" value="${o.pa}" step="0.1"></div><div class="field"><label>Espesor puertas y frentes</label><select class="tf">${opt(o.tf)}</select></div></div>
+<div class="row3"><div class="field"><label>Color costados y puertas</label><input type="text" class="colc" value="${String(o.colc).replace(/"/g,'&quot;')}" placeholder="ej. roble"></div></div></div>
+<div class="blk"><div class="blk-t"><b>4</b>Repisas</div>
+<div class="row3"><div class="field"><label>Cantidad</label><input type="number" class="mr" value="${o.rep}" min="0" step="1"></div><div class="field"><label>Espesor</label><select class="re">${opt(o.re)}</select></div><div class="field"><label>Color</label><input type="text" class="colr" value="${String(o.colr).replace(/"/g,'&quot;')}" placeholder="ej. roble"></div></div></div>
+<div class="blk"><div class="blk-t"><b>5</b>Gavetas</div>
+<div class="row3"><div class="field"><label>Largo del riel</label><select class="rail"><option value="0">Automático</option>${[30,35,40,45,50,55,60].map(x=>`<option value="${x}"${o.rail==x?' selected':''}>${x} cm</option>`).join('')}</select></div><div class="field"><label>Espesor de la caja</label><select class="tg">${opt(o.tg)}</select></div><div class="field"><label>Color de la caja</label><input type="text" class="colg" value="${String(o.colg).replace(/"/g,'&quot;')}" placeholder="blanco"></div></div>
+<div class="railwarn" style="display:none;margin:8px 0;padding:10px;border-radius:10px;border:1px solid #E5484D;background:rgba(229,72,77,.15);color:#FFB4B6;font-size:13px"></div>
+<div class="blk-s">Cantidad de gavetas y alto del frente. Con el alto vacío se reparte todo el alto libre entre ellas.</div><div class="gav"></div>
+<div class="btnrow"><button type="button" class="secondary ag">+ Grupo de gavetas</button></div></div>
+<div class="blk"><div class="blk-t"><b>6</b>Canto</div>
+<div class="row3"><div class="field"><label>Canto de las piezas</label><select class="cm"><option value="normal">Normal (según pieza)</option><option value="todo">4 lados en todas</option><option value="2c1l">Laterales 2 cortos 1 largo (pisos 1 largo)</option></select></div></div></div>
+<div class="btnrow"><button type="button" class="secondary dup">Duplicar módulo</button><button type="button" class="secondary del">Quitar módulo</button></div>`;
+ c.querySelector('.mp').value=o.pu;c.querySelector('.cm').value=o.cm;c.querySelector('.mz').value=o.zs;c.querySelector('.tipo').value=o.tipo;c.querySelector('.tipo').onchange=e=>{c.querySelector('.mz').value=e.target.value==='sup'?0:1;calc()};c.querySelector('.nc').value=o.nc;c.querySelector('.cz').value=o.cz;
+ {const cE=c.querySelector('.col'),ot=[c.querySelector('.colc'),c.querySelector('.colr')];ot.forEach(x=>{x.dataset.t=x.value?'1':'';x.addEventListener('input',()=>x.dataset.t='1')});cE.addEventListener('input',()=>ot.forEach(x=>{if(!x.dataset.t)x.value=cE.value}))}
+ o.g.forEach(g=>c.querySelector('.gav').append(rowG(g[0],g[1]||'')));
+ c.querySelector('.ag').onclick=()=>{c.querySelector('.gav').append(rowG(1,''));calc()};
+ c.querySelector('.del').onclick=()=>{c.remove();calc()};
+ c.querySelector('.dup').onclick=()=>{addMod(readMod(c));calc()};
+ $('mods').append(c);calc()}
+function readMod(c){return {n:c.querySelector('.mn').value,q:v(c,'.mq'),w:v(c,'.mw'),h:v(c,'.mh'),d:v(c,'.md'),zs:v(c,'.mz'),z:v(c,'.mz')?num('za'):0,tc:v(c,'.tc'),ti:v(c,'.ti'),tf:v(c,'.tf'),rep:v(c,'.mr'),pu:v(c,'.mp'),tg:v(c,'.tg'),col:c.querySelector('.col').value.trim(),colc:c.querySelector('.colc').value.trim(),colr:c.querySelector('.colr').value.trim(),colg:c.querySelector('.colg').value.trim(),cm:c.querySelector('.cm').value,re:v(c,'.re'),tipo:c.querySelector('.tipo').value,nc:v(c,'.nc'),cz:v(c,'.cz'),rail:v(c,'.rail'),pa:c.querySelector('.pa').value,g:[...c.querySelectorAll('.grow')].map(g=>[v(g,'.q'),g.querySelector('.f').value])}}
+let R=null;
+function calcular(){
+ let zTot=0;const alertas=[],P=[],herr={rail:{},cor:0,tg:0,bis:0,tp:0,sop:0,niv:0},mods=[];
+ const hg=num('holgG'),rg=num('restaG'),ef=num('extraF'),hp=num('holgP'),ret=num('retiro');
+ document.querySelectorAll('.mod').forEach((c,i)=>{
+  const m=readMod(c),Q=Math.max(1,Math.round(m.q)),Z=m.z,Hc=m.h-Z,nc=Math.round(m.nc),Wi=m.w-2*m.ti-nc*m.tc,sec=`${m.n?m.n+' · ':''}${m.tipo==='sup'?'Superior':'Inferior'} · Módulo ${i+1} (${m.w} × ${m.h} × ${m.d}, profundo terminado ${r(m.d+(m.tipo==='sup'?0:num('fe')))}${Q>1?', x'+Q:''})`;
+  c.querySelector('h3').textContent=sec;
+  const add=(n,q,l,a,t,canto,cl)=>{if(q>0)P.push({sec,n,q:q*Q,l:r(l),a:r(a),t,canto,cl,cm:m.cm,tipo:m.tipo})};
+  add('Lateral',2,Hc,m.d,m.ti,'canto lado '+r(Hc),[Hc]);
+  const Hco=m.cz?m.h:Hc;add('Costado'+(m.cz?' (con zócalo)':''),nc,Hco,m.d+num('cext')+(m.tipo==='sup'?0:num('fe')),m.tc,'canto lado '+r(Hco),[Hco]);
+  const sup=m.tipo==='sup',fe=sup?num('feS'):num('fe');
+  add('Piso',sup?2:1,Wi,m.d,m.ti,'canto lado '+r(Wi),[Wi]);
+  if(!sup)add('Regla de techo',2,Wi,num('rt'),m.ti,'canto 1 largo',[Wi]);
+  if(sup)add('Fondo (embutido)',1,Hc-2*m.ti,Wi,fe,'sin canto',[]);else add('Fondo (pegado atrás)',1,Hc,Wi+2*m.ti,fe,'sin canto',[]);
+  {const rl=Wi-num('holgR'),ra=m.d-ret;add('Repisa',Math.round(m.rep),rl,ra,m.re,'canto 4 lados',[2*rl+2*ra])}
+  herr.sop+=Math.round(m.rep)*4*Q;
+  let frentesAlto=0;const hp2=hp;
+  const manual=m.g.filter(g=>parseFloat(g[1])),autoQ=m.g.filter(g=>!parseFloat(g[1])).reduce((s,g)=>s+g[0],0);
+  const usado=manual.reduce((s,g)=>s+g[0]*(parseFloat(g[1])+hp2),0),slotAuto=autoQ?(Hc-usado)/autoQ:0;
+  const railLen=m.rail||([60,55,50,45,40,35,30].find(x=>x<=m.d-rg)||30);
+  c.querySelector('.rail').options[0].text='Automático: '+railLen+' cm';
+  const rw=c.querySelector('.railwarn'),maxR=m.d-m.ti;
+  if(m.g.length&&railLen>maxR){const ok=[60,55,50,45,40,35,30].find(x=>x<=maxR)||30;const msg=`⚠ Módulo ${i+1}: el riel de ${railLen} cm no cabe en una profundidad de ${m.d} cm (queda ${r(maxR)} cm útiles tras el fondo). Usa un riel de ${ok} cm o menos.`;rw.textContent=msg;rw.style.display='block';alertas.push(msg)}else rw.style.display='none';
+  m.gc=[];c.querySelectorAll('.grow').forEach(()=>{});
+  m.g.forEach((g,gi)=>{const q=g[0],fr=parseFloat(g[1])||(slotAuto-hp2),a=fr-ef,fw=Wi-hg,pg=railLen-2*m.tg,tag=m.g.length>1?' (grupo '+(gi+1)+')':'';m.gc.push([q,fr]);const gr0=c.querySelectorAll('.grow')[m.gc.length-1];if(gr0)gr0.querySelector('.f').placeholder='auto: '+r(fr);
+   add('Frente / trasero de gaveta'+tag,2*q,fw,a,m.tg,'2 cortos 1 largo',[a,a,fw]);
+   add('Lateral de gaveta'+tag,2*q,pg,a,m.tg,'canto 1 largo',[pg]);
+   add('Fondo de gaveta'+tag,q,fw-2*m.tg,pg,m.tg,'sin canto',[]);
+   add('Puerta de gaveta (frente)'+tag,q,Wi+2*m.ti-hp,fr,m.tf,'4 lados',[2*(Wi+2*m.ti-hp)+2*fr]);
+   frentesAlto+=q*(fr+hp2);herr.cor+=q*Q;herr.rail[railLen]=(herr.rail[railLen]||0)+q*Q;herr.tg+=q*Q});
+  const np=Math.round(m.pu);
+  if(np>0){const pa=parseFloat(m.pa)||(Hc-hp-frentesAlto),pw=(Wi+2*m.ti-hp-(np-1)*hp)/np;
+   if(pa<5){alertas.push(`⚠ Módulo ${i+1}: no queda alto libre para la puerta (las gavetas ocupan todo el módulo). Pon el alto del frente a mano en las gavetas.`);herr.bis+=0}else{m.pdim=[r(pa),r(pw)];add('Puerta',np,pa,pw,m.tf,'4 lados',[2*pa+2*pw]);herr.bis+=np*(pa>120?3:2)*Q;herr.tp+=np*Q}}
+  if(Z>0){herr.niv+=(4+(m.w>80?1:0))*Q;zTot+=(m.w-(m.cz?nc*m.tc:0))*Q}
+  const ordN=n=>n==='Lateral'?11:(n==='Piso'||n==='Techo')?12:n.startsWith('Regla de techo')?13:n.startsWith('Fondo (')?14:n.startsWith('Costado')?21:n.startsWith('Puerta de gaveta')?22:n==='Puerta'?23:n.startsWith('Repisa')?31:n.startsWith('Frente / trasero')?41:n.startsWith('Lateral de gaveta')?42:n.startsWith('Fondo de gaveta')?43:99;
+  const ini=P.findIndex(p=>p.sec===sec);if(ini>=0){const bloque=P.splice(ini).map((p,k)=>[p,k]).sort((a,b)=>ordN(a[0].n)-ordN(b[0].n)||a[1]-b[1]).map(x=>x[0]);const cc=x=>x?' · color '+x:'',cl=cc(m.col),cc2=cc(m.colc),cr=cc(m.colr),cg=' · color '+(m.colg||'sin definir');bloque.forEach(p=>{const g=Math.floor(ordN(p.n)/10);p.gn=g;p.color=g===4?m.colg:g===2?m.colc:g===3?m.colr:m.col;p.grp=g===1?`Laterales, piso, techo y fondo · ${m.ti} cm${cl}`:g===2?`Costados y puertas · ${m.tc===m.tf?m.tc+' cm':'costados '+m.tc+' cm / puertas '+m.tf+' cm'}${cc2}`:g===3?`Repisas · ${m.re} cm${cr}`:`Gavetas (cajas) · ${m.tg} cm${cg}`});P.push(...bloque)}
+  mods.push(Object.assign({idx:i+1,Q,Hc,Wi,pu:np,frentesAlto},m));
+ });
+ if(num('za')<10||num('za')>15)alertas.push('⚠ El alto del zócalo suele ser de 10 a 15 cm.');
+ if(zTot>0&&$('zt').value==='mel'){const n=Math.ceil(zTot/244),l=zTot/n,t=num('zesp');P.push({sec:'Zócalo continuo (todo el mueble)',n:'Zócalo'+($('zc').value?' '+$('zc').value:''),q:n,l:r(l),a:r(num('za')),t,canto:'canto 1 largo',cl:[l]});if(n>1)alertas.push(`ℹ El zócalo mide ${r(zTot)} cm y la lámina llega a 244 cm, por eso se divide en ${n} piezas iguales (empates inevitables).`)}
+ P.forEach(p=>{if(p.cm==='todo'&&!p.n.startsWith('Fondo')){p.canto='4 lados';p.cl=[2*(p.l+p.a)]}else if(p.cm==='2c1l'&&p.n==='Lateral'){p.canto='2 cortos 1 largo';p.cl=[2*Math.min(p.l,p.a)+Math.max(p.l,p.a)]}else if(p.cm==='2c1l'&&(p.n==='Piso'||p.n==='Techo')){p.canto='canto 1 largo';p.cl=[Math.max(p.l,p.a)]}});
+ let area=0,canto=0;const by={};P.forEach(p=>{const m=p.q*p.l*p.a/10000;area+=m;const kk=p.t+'|'+(p.color||'');by[kk]=(by[kk]||0)+m;canto+=p.q*p.cl.reduce((s,x)=>s+x,0)/100});
+ const d=num('desp')/100,hoja=1.83*2.44;
+ const mats=Object.keys(by).sort((a,b)=>parseFloat(b)-parseFloat(a)||a.localeCompare(b)).map(k=>({t:k.split('|')[0],color:k.split('|')[1],area:by[k],lam:Math.ceil(by[k]*(1+d)/hoja)}));
+ const H=[];
+ if(herr.cor)Object.keys(herr.rail).sort((a,b)=>a-b).forEach(k=>H.push([herr.rail[k],'Rieles de gaveta de '+k+' cm (par)'])),H.push([herr.tg,'Tiradores para gaveta']);
+ if(herr.tp)H.push([herr.bis,'Bisagras'],[herr.tp,'Tiradores para puerta']);
+ if(herr.sop)H.push([herr.sop,'Soportes de repisa']);
+ if(herr.niv)H.push([herr.niv,'Patas plásticas regulables de '+r(num('za'))+' cm (4 por módulo, +1 central si pasa de 80 cm)']);
+ if(zTot>0&&$('zt').value==='pvc')H.push([(Math.round(zTot)/100)+' ml','Zócalo PVC'+($('zc').value?' '+$('zc').value:'')+' de '+r(num('za'))+' cm de alto (una sola tira continua)']);
+ return {alertas,P,mods,mats,canto,herr:H,hr:herr,zTot,zt:$('zt').value,titulo:$('titulo').value}}
+function cantoTxt(p){const c=p.canto;
+ if(c==='sin canto')return 'sin canto';
+ if(/4 lados/.test(c))return 'canto en los 4 lados';
+ if(c==='2 cortos 1 largo'){const lo=Math.max(p.l,p.a),co=Math.min(p.l,p.a);return `canto en 2 lados cortos (${r(co)} cm c/u) + 1 lado largo (${r(lo)} cm)`}
+ const L=p.cl&&p.cl.length?p.cl[0]:0;return `canto en 1 lado (${r(L)} cm)`}
+function texto(){const o=R;let s='';
+ if(o.alertas.length)s+=o.alertas.join('\n')+'\n\n';
+ s+=`*DESPIECE DE MOBILIARIO*${o.titulo?'\n'+o.titulo:''}\nMelamina hidrófuga. Medidas en cm: Largo x Ancho x Espesor.\n`;
+ let sec='',gr='';
+ o.P.forEach(p=>{
+  if(p.sec!==sec){sec=p.sec;gr='';s+=`\n==============================\n*${sec}*\n==============================\n`}
+  if(p.grp&&p.grp!==gr){gr=p.grp;s+=`\n*${gr}*\n`}
+  s+=`- ${p.n}: ${p.q} ${p.q>1?'piezas':'pieza'} - ${p.l} x ${p.a} x ${p.t} - ${cantoTxt(p)}\n`});
+ return s}
+function diagrama(o){if(!o.mods.length)return'';
+ const rows=[o.mods.filter(m=>m.tipo==='sup'),o.mods.filter(m=>m.tipo!=='sup')].filter(x=>x.length);
+ const rw=x=>x.reduce((a,m)=>a+m.w*m.Q,0),rh=x=>Math.max(...x.map(m=>m.h));
+ const maxW=Math.max(...rows.map(rw)),totH=rows.reduce((a,x)=>a+rh(x),0);
+ const L=70,G=14,rowGap=118,s=Math.min(520/maxW,600/totH),LN='stroke="#8FB8C9" stroke-width="1"';
+ const hd=(x1,x2,y,t)=>`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" ${LN}/><line x1="${x1}" y1="${y-5}" x2="${x1}" y2="${y+5}" ${LN}/><line x1="${x2}" y1="${y-5}" x2="${x2}" y2="${y+5}" ${LN}/><text x="${(x1+x2)/2}" y="${y+16}" text-anchor="middle" class="dimtext" font-size="13" font-weight="700">${t}</text>`;
+ const vd=(x,y1,y2,t)=>`<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" ${LN}/><line x1="${x-5}" y1="${y1}" x2="${x+5}" y2="${y1}" ${LN}/><line x1="${x-5}" y1="${y2}" x2="${x+5}" y2="${y2}" ${LN}/><text x="${x-9}" y="${(y1+y2)/2}" transform="rotate(-90 ${x-9} ${(y1+y2)/2})" text-anchor="middle" class="dimtext" font-size="13" font-weight="700">${t}</text>`;
+ let g='',y0=34,totalX=L+maxW*s+Math.max(...rows.map(r=>r.reduce((a,m)=>a+m.Q,0)))*G+30;
+ rows.forEach(row=>{const hmax=rh(row)*s,base=y0+hmax;let x=L;
+  g+=`<text x="${L}" y="${y0-12}" class="dimtext" font-size="13" font-weight="700">${row[0].tipo==='sup'?'MUEBLES SUPERIORES (aéreos)':'MUEBLES INFERIORES'}</text>`;
+  g+=vd(L-22,base-rh(row)*s,base,'alto '+r(rh(row)));
+  row.forEach(m=>{for(let k=0;k<m.Q;k++){const w=m.w*s,h=m.h*s,y=base-h,z=m.z*s;
+   g+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" class="marco-outline" stroke-width="2.5"/>`;
+   if(z>0)g+=`<rect x="${x}" y="${base-z}" width="${w}" height="${z}" class="hoja-fill"/><text x="${x+w/2}" y="${base-z/2+4}" text-anchor="middle" class="dimtext" font-size="11">patas/zócalo ${r(m.z)}</text>`;
+   let cy=base-z;m.gc.forEach(gr=>{const fr=gr[1]*s;for(let j=0;j<gr[0];j++){cy-=fr;g+=`<rect x="${x+3}" y="${cy}" width="${w-6}" height="${fr-2}" class="hoja-fill"/><text x="${x+w/2}" y="${cy+fr/2+4}" text-anchor="middle" class="dimtext" font-size="12">gaveta ${r(gr[1])}</text>`}});
+   const free=cy-y,nr=Math.round(m.rep);
+   for(let j=1;j<=nr;j++){const ly=y+free*j/(nr+1);g+=`<line x1="${x+3}" y1="${ly}" x2="${x+w-3}" y2="${ly}" class="marco-inner" stroke-width="2"/>`}
+   if(m.pu>0){const dw=(w-6)/m.pu;for(let j=0;j<m.pu;j++)g+=`<rect x="${x+3+j*dw}" y="${y+3}" width="${dw-2}" height="${Math.max(0,free-6)}" fill="none" class="marco-inner" stroke-dasharray="6 4" stroke-width="1.5"/>`;
+    if(m.pdim)g+=`<text x="${x+w/2}" y="${y+20}" text-anchor="middle" class="dimtext" font-size="12">puerta ${m.pdim[0]} × ${m.pdim[1]}</text>`}
+   else if(free>20)g+=`<text x="${x+w/2}" y="${y+18}" text-anchor="middle" class="dimtext" font-size="12">libre ${r(free/s)}</text>`;
+   if(nr>0&&free>30)g+=`<text x="${x+w/2}" y="${y+free/2+4}" text-anchor="middle" class="dimtext" font-size="12">${nr} repisa${nr>1?'s':''}</text>`;
+   g+=hd(x,x+w,base+16,'ancho '+r(m.w));
+   g+=`<text x="${x+w/2}" y="${base+50}" text-anchor="middle" class="dimtext" font-size="12">M${m.idx}${m.n?' · '+m.n:''}</text><text x="${x+w/2}" y="${base+66}" text-anchor="middle" class="dimtext" font-size="11">prof. ${r(m.d)}${m.tipo==='sup'?'':' (+'+num('fe')+' fondo)'}</text>`;
+   x+=w+G}});
+  y0=base+rowGap});
+ const H=y0-rowGap+80,viewW=Math.max(totalX,560),off=(viewW-totalX)/2;
+ const resumen=o.mods.map(m=>{const it=[];m.gc.forEach(gr=>it.push(`${gr[0]*m.Q} gaveta${gr[0]*m.Q>1?'s':''} de frente ${r(gr[1])}`));if(m.rep>0)it.push(`${m.rep*m.Q} repisa${m.rep*m.Q>1?'s':''}`);if(m.pu>0&&m.pdim)it.push(`${m.pu*m.Q} puerta${m.pu*m.Q>1?'s':''} de ${m.pdim[0]} × ${m.pdim[1]}`);return `<li><b>M${m.idx}${m.n?' · '+m.n:''}</b> (${m.tipo==='sup'?'superior':'inferior'}${m.Q>1?', x'+m.Q:''}): ${r(m.w)} ancho × ${r(m.h)} alto × ${r(m.d)} prof.${it.length?' — '+it.join(', '):''}</li>`}).join('');
+ return `<div class="plan"><h3 class="plan-t">Plano de los módulos</h3><svg viewBox="0 0 ${viewW} ${H}" style="width:100%;display:block;margin:0 auto"><g transform="translate(${off},0)">${g}</g></svg>
+<div class="plan-leg"><div><b>Cómo leer el plano</b></div><ul>
+<li><b>Líneas con rayitas en los extremos:</b> son las medidas en cm. La de abajo es el <b>ancho</b> de cada módulo y la de la izquierda es el <b>alto</b>.</li>
+<li><b>Recuadros sombreados abajo:</b> las patas y el zócalo, con su alto.</li>
+<li><b>Recuadros sombreados con "gaveta":</b> el frente de cada gaveta, con su alto.</li>
+<li><b>Línea horizontal:</b> una repisa. <b>Recuadro con rayas:</b> una puerta, con su alto × ancho.</li>
+<li><b>"prof.":</b> la profundidad del módulo. En los inferiores se suma el fondo pegado atrás.</li></ul>
+<div class="plan-res"><b>Resumen por módulo</b><ul>${resumen}</ul></div></div></div>`}
+function render(){const o=R;let h=o.alertas.map(a=>`<div class="footnote warning"><strong>${a}</strong></div>`).join('')+'<table class="cutlist"><thead><tr><th>Pieza a cortar</th><th>Cant.</th><th>Largo</th><th>Ancho</th><th>Esp.</th><th>Canto</th></tr></thead><tbody>',sec='';
+ let gr='';o.P.forEach(p=>{if(p.sec!==sec){sec=p.sec;gr='';h+=`<tr class="section${p.tipo==='sup'?' sup':''}"><td colspan="6">${sec}</td></tr>`}if(p.grp&&p.grp!==gr){gr=p.grp;h+=`<tr class="subsec"><td colspan="6">${gr}</td></tr>`}
+ h+=`<tr><td>${p.n}</td><td class="qty">${p.q}</td><td class="dim">${p.l}</td><td class="dim">${p.a}</td><td>${p.t}</td><td>${p.canto}</td></tr>`});
+ $('ficha').innerHTML=(o.titulo?`<div class="ficha-titulo">${o.titulo}</div>`:'')+h+'</tbody></table>';
+ $('diagram').innerHTML=diagrama(o);
+ $('material').innerHTML=`<div class="material-card"><h3>Resumen de material</h3>${o.mats.map(m=>`<div class="material-row"><span class="material-label">${m.t<1?'Fondo (tablero delgado)':'Melamina hidrófuga'} ${m.t} cm${m.color?' · color '+m.color:''}</span><span class="material-nums"><strong>${Math.round(m.area*100)/100} m²</strong> · ${m.lam} láminas de 183×244</span></div>`).join('')}<div class="material-row"><span class="material-label">Canto</span><span class="material-nums"><strong>${Math.ceil(o.canto)} ml</strong></span></div>${o.herr.map(x=>`<div class="material-row"><span class="material-label">${x[1]}</span><span class="material-nums"><strong>${x[0]}</strong></span></div>`).join('')}</div>`}
+let tmAuto=null;function calc(){R=calcular();render();clearTimeout(tmAuto);tmAuto=setTimeout(autoGuardar,500)}
+document.addEventListener('input',calc);
+$('addM').onclick=()=>addMod({n:'',w:60,h:200,d:60,zs:0,rep:0});
+async function copiarTexto(t){
+ try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(t);return true}}catch(e){}
+ try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;left:0;opacity:0';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);const ok=document.execCommand('copy');ta.remove();return ok}catch(e){return false}}
+$('btnCopiar').onclick=async()=>{const t=texto(),box=$('txtBox');
+ if(await copiarTexto(t)){$('cs').textContent='Copiado ✔ — ya puedes pegarlo';box.style.display='none'}
+ else{$('cs').textContent='Tu navegador no deja copiar automático. El texto está abajo: tócalo, selecciona todo y copia.';box.value=t;box.style.display='block';box.focus();box.select()}};
+$('btnWa').onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(texto()),'_blank');
+
+/* ===== PROYECTOS ===== */
+const GID=['titulo','zt','za','zc','holgG','restaG','extraF','holgP','retiro','holgR','cext','zesp','fe','rt','feS','desp'];
+const KP='gt_mob_proyectos_v1',KB='gt_mob_borrador_v1';
+let curId=null;
+const ls=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}};
+const ss=(k,x)=>{try{localStorage.setItem(k,JSON.stringify(x));return true}catch(e){return false}};
+function estado(){const e={v:1,g:{},m:[...document.querySelectorAll('.mod')].map(readMod)};GID.forEach(i=>e.g[i]=$(i).value);return e}
+function cargar(e){GID.forEach(i=>{if(e.g&&e.g[i]!==undefined)$(i).value=e.g[i]});$('mods').innerHTML='';(e.m||[]).forEach(m=>addMod(m));calc()}
+function autoGuardar(){ss(KB,{curId,e:estado()})}
+const pMsg=t=>{$('pMsg').textContent=t};
+function refLista(){const P=ls(KP)||{},ids=Object.keys(P).sort((a,b)=>P[b].fecha.localeCompare(P[a].fecha)),sel=$('pLista');
+ sel.innerHTML=ids.length?ids.map(i=>`<option value="${i}"${i===curId?' selected':''}>${P[i].nombre.replace(/</g,'&lt;')} · ${P[i].fecha.slice(0,10)}</option>`).join(''):'<option value="">(todavía no hay proyectos guardados)</option>'}
+function guardar(copia){const nombre=$('titulo').value.trim();if(!nombre){pMsg('Escribe primero el título del proyecto (campo de abajo).');$('titulo').focus();return}
+ const P=ls(KP)||{},id=(!copia&&curId&&P[curId])?curId:'p'+Date.now();
+ P[id]={id,nombre:nombre+(copia?' (copia)':''),fecha:new Date().toISOString(),e:estado()};
+ if(copia)P[id].e.g.titulo=P[id].nombre;
+ if(!ss(KP,P)){pMsg('Este navegador no deja guardar aquí. Usa “Descargar archivo”.');return}
+ curId=id;if(copia)$('titulo').value=P[id].nombre;refLista();$('pLista').value=id;pMsg('Guardado ✔ '+P[id].nombre);autoGuardar()}
+$('pGuardar').onclick=()=>guardar(false);$('pCopia').onclick=()=>guardar(true);
+$('pAbrir').onclick=()=>{const P=ls(KP)||{},id=$('pLista').value;if(!id||!P[id]){pMsg('Elige un proyecto de la lista.');return}curId=id;cargar(P[id].e);pMsg('Abierto: '+P[id].nombre)};
+function dosPasos(btn,txt,fn){let t=null;btn.onclick=()=>{if(btn.dataset.s){clearTimeout(t);btn.textContent=btn.dataset.o;delete btn.dataset.s;fn();return}btn.dataset.o=btn.textContent;btn.dataset.s=1;btn.textContent=txt;t=setTimeout(()=>{btn.textContent=btn.dataset.o;delete btn.dataset.s},4000)}}
+dosPasos($('pBorrar'),'¿Seguro? Toca otra vez',()=>{const P=ls(KP)||{},id=$('pLista').value;if(!id||!P[id]){pMsg('Elige un proyecto de la lista.');return}const n=P[id].nombre;delete P[id];ss(KP,P);if(curId===id)curId=null;refLista();pMsg('Borrado: '+n)});
+dosPasos($('pNuevo'),'¿Seguro? Se borra lo no guardado',()=>{curId=null;$('titulo').value='';$('mods').innerHTML='';addMod({n:'',w:60,h:200,d:60,zs:0,rep:0});pMsg('Proyecto nuevo.')});
+$('pExp').onclick=()=>{const e=estado(),n=($('titulo').value.trim()||'proyecto').replace(/[^\w\-áéíóúñÁÉÍÓÚÑ ]+/g,'').trim().replace(/\s+/g,'-');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(e)],{type:'application/json'}));a.download=n+'.json';document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);pMsg('Archivo descargado ✔')};
+$('pImpB').onclick=()=>$('pImp').click();
+$('pImp').onchange=ev=>{const f=ev.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const e=JSON.parse(rd.result);if(!e||!Array.isArray(e.m))throw 0;curId=null;cargar(e);pMsg('Archivo abierto ✔ (toca Guardar para dejarlo en tu lista)')}catch(x){pMsg('Ese archivo no es un proyecto válido.')}ev.target.value=''};rd.readAsText(f)};
+(function init(){const b=ls(KB);
+ if(b&&b.e&&Array.isArray(b.e.m)&&b.e.m.length){curId=b.curId||null;cargar(b.e)}else addMod({n:'Closet',q:2,w:82.4,h:200,d:60,zs:1,ti:1.8,rep:0,g:[[4,'']]});refLista()})();
+</script>
+</body></html>
